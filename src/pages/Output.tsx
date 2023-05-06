@@ -1,0 +1,170 @@
+import { Link, useLocation } from "react-router-dom";
+import TitleBar from "../components/TitleBar";
+import "./Output.css";
+import noImage from "../assets/no-image-png-2.png";
+import OptionsButtons from "../components/OptionsButtons";
+
+function Output() {
+  // Use Location to get the anime data pushed by the API.
+  const location = useLocation();
+
+  // If there's no state, that means the output page was accessed without randomizing.
+  if (!location.state) {
+    return (
+      <>
+        <div>
+          <TitleBar text="Anime Randomizer" />
+        </div>
+        <div>
+          <h1 className="text-center subtitle">
+            No Anime found, return to <Link to="/">main.</Link>
+          </h1>
+        </div>
+      </>
+    );
+  }
+
+  // Normal Case
+  const anime = location.state.data;
+  return (
+    <>
+      <div>
+        <h1 className="specialtext text-center">
+          <strong>
+            <a href={anime.url} target="_blank">
+              {anime.title}
+            </a>
+          </strong>
+        </h1>
+        <h2 className="text-center subtitle">
+          <strong>{anime.title_english}</strong>
+        </h2>
+      </div>
+
+      <div className="card">
+        {/* we call displayImage to get the anime's thumbnail */}
+        <img
+          src={displayImage(anime)}
+          alt="anime thumbnail"
+          className="card-img-top"
+        ></img>
+        <ul className="list-group list-group-flush">
+          <li className="list-group-item">
+            <strong>Type: </strong>
+            {anime.type}
+          </li>
+          <li className="list-group-item">
+            <strong>Aired: </strong>
+            {displayAired(anime)}
+          </li>
+          <li className="list-group-item">
+            <strong>Episodes: </strong>
+            {anime.episodes} ({anime.duration})
+          </li>
+          <li className="list-group-item">
+            <strong>Score: </strong>
+            {anime.score}
+          </li>
+          <li className="list-group-item">
+            <strong>Rank/Popularity: </strong>
+            {anime.rank} / {anime.popularity}
+          </li>
+          <li className="list-group-item">
+            <strong>Rating: </strong>
+            {anime.rating}
+          </li>
+          <li className="list-group-item">
+            <strong>Genre: </strong>
+            {displayGenre(anime)}
+          </li>
+          <li className="list-group-item">
+            <strong>Synopsis: </strong>
+            {displaySynopsis(anime)}
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <OptionsButtons />
+      </div>
+    </>
+  );
+}
+
+/* tries to return thumbnail from API, else returns placeholder */
+function displayImage(anime: any) {
+  try {
+    return anime.images.jpg.image_url;
+  } catch (error) {
+    null;
+  }
+
+  try {
+    return anime.images.webp.image_url;
+  } catch (error) {
+    null;
+  }
+  return noImage;
+}
+
+/* tries to return genres from API, else returns blank */
+function displayGenre(anime: any) {
+  var genreList = "";
+  try {
+    for (var i = 0; i < anime.genres.length; i++)
+      if (i < anime.genres.length - 1) genreList += anime.genres[i].name + ", ";
+      else genreList += anime.genres[i].name;
+    return genreList;
+  } catch (error) {
+    null;
+  }
+
+  return "";
+}
+/* tries to truncate synopsis from API. If synopsis is null, returns blank */
+function displaySynopsis(anime: any) {
+  try {
+    //can change truncation length by changing '> 0' to '>= num' and change slice to same num
+    if (anime.synopsis.length > 0) {
+      return anime.synopsis;
+    } else return anime.synopsis.slice(0, 1) + "...";
+  } catch (error) {
+    null;
+  }
+
+  return "";
+}
+
+/* tries to build aired date string from API. Else returns blank */
+function displayAired(anime: any) {
+  var airDate = "";
+  var months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  try {
+    airDate += months[anime.aired.prop.from.month - 1];
+    airDate += " " + anime.aired.prop.from.day;
+    airDate += ", " + anime.aired.prop.from.year;
+    //can add status ('Finished Airing', etc.)
+    //airDate += ' (' + anime.status + ')'
+    if (anime.aired.prop.from.month != null) return airDate;
+    return "";
+  } catch (error) {
+    null;
+  }
+
+  return "";
+}
+
+export default Output;

@@ -1,0 +1,38 @@
+.specialtext {
+  color: #fff176 !important;
+  font-size: 400% !important;
+}
+
+.subtitle {
+  color: white;
+  font-size: 250%;
+}
+
+.specialtext a {
+  text-decoration: none !important;
+  color: inherit !important;
+}
+
+.card-img-top {
+  max-width: 30%;
+  height: 30vw;
+}
+
+.card {
+  flex-direction: row !important;
+  background-color: #444444 !important;
+  margin-left: 2%;
+  margin-right: 2%;
+}
+
+li {
+  background-color: #444444 !important;
+  color: white !important;
+  font-size: 1.3em;
+  margin-left: 5%;
+}
+
+li strong {
+  color: #fff176 !important;
+  font-size: 1.3em;
+}
