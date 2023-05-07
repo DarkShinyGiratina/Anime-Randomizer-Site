@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import TitleBar from "../components/TitleBar";
 import "./Loading.css";
 import { useEffect, useState } from "react";
-import kurukuru from "../assets/loading.gif";
+import kurukuru from "../assets/loading.webp";
 import OptionsButtons from "../components/OptionsButtons";
 
 function Loading() {

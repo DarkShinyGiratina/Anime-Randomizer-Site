@@ -1,11 +1,11 @@
 .specialtext {
   color: #fff176 !important;
-  font-size: 400% !important;
+  font-size: 3rem !important;
 }
 
 .subtitle {
   color: white;
-  font-size: 250%;
+  font-size: 2rem;
 }
 
 .specialtext a {
@@ -14,8 +14,8 @@
 }
 
 .card-img-top {
-  max-width: 30%;
-  height: 30vw;
+  width: auto !important;
+  height: 50vh !important;
 }
 
 .card {
@@ -28,11 +28,11 @@
 li {
   background-color: #444444 !important;
   color: white !important;
-  font-size: 1.3em;
+  font-size: 0.9rem;
   margin-left: 5%;
 }
 
 li strong {
   color: #fff176 !important;
-  font-size: 1.3em;
+  font-size: 0.9rem;
 }

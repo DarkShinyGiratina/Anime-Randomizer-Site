@@ -1,6 +1,7 @@
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { genres } from "../data/Genres";
 import "./RandomizeButton.css";
+import { types } from "../data/Types";
 
 function RandomizeButton() {
   let navigate = useNavigate();
@@ -38,7 +39,10 @@ const getAnime = async (navigate: NavigateFunction) => {
 function passCheck(anime: any): boolean {
   let genrePass: boolean = genreCheck(anime);
   let datePass: boolean = dateCheck(anime);
-  return genrePass && datePass;
+  let numPass: boolean = numCheck(anime);
+  let lenPass: boolean = lenCheck(anime);
+  let typePass: boolean = typeCheck(anime);
+  return genrePass && datePass && numPass && lenPass && typePass;
 }
 
 function genreCheck(anime: any): boolean {
@@ -88,10 +92,50 @@ function dateCheck(anime: any): boolean {
   let earliest: string = sessionStorage.getItem("earliestAirdate") ?? "1700-01-01";
 
   //Get airdate from the data, if there is no airdate make it null so it'll get rejected by the search
-  let airdate = anime.data.aired.from.split("T")[0] ?? "null";
+  let airdate = anime.data.aired.from?.split("T")[0] ?? "null";
   if (airdate === "null") return false;
 
-  return earliest < airdate && airdate < latest;
+  return earliest <= airdate && airdate <= latest;
+}
+
+function numCheck(anime: any): boolean {
+  let episodes = anime.data.episodes;
+  let minEpisodes = sessionStorage.getItem("minEpisodes") ?? 0;
+  let maxEpisodes = sessionStorage.getItem("maxEpisodes") ?? Infinity;
+  return +minEpisodes <= episodes && episodes <= +maxEpisodes;
+}
+
+function lenCheck(anime: any): boolean {
+  let duration: string = anime.data.duration;
+  let minLen = sessionStorage.getItem("minLength") ?? 0;
+  let maxLen = sessionStorage.getItem("maxLength") ?? Infinity;
+
+  let durationWords: string[] = duration.split(" ");
+  let totalDurationMinutes: number = 0;
+
+  for (let i = 0; i < durationWords.length; i++) {
+    if (durationWords[i] === "sec") {
+      totalDurationMinutes += +durationWords[i - 1] / 60;
+    } else if (durationWords[i] === "min") {
+      totalDurationMinutes += +durationWords[i - 1];
+    } else if (durationWords[i] === "hr") {
+      totalDurationMinutes += +durationWords[i - 1] * 60;
+    }
+  }
+
+  return +minLen <= totalDurationMinutes && totalDurationMinutes <= +maxLen;
+}
+
+function typeCheck(anime: any): boolean {
+  // Iterate over every key in session storage, if the key is in the overall types list that means it's a selected type
+  let activatedTypes: string[] = [];
+  for (let key of Object.keys(sessionStorage)) {
+    if (types.includes(key)) {
+      activatedTypes.push(key);
+    }
+  }
+  // Return whether we have the type or not (if there are no types, return true too)
+  return activatedTypes.includes(anime.data.type) || activatedTypes.length === 0;
 }
 
 export default RandomizeButton;

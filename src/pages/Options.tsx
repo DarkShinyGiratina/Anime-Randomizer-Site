@@ -1,10 +1,11 @@
-import OptionsButtons from "../components/OptionsButtons";
 import TitleBar from "../components/TitleBar";
 import "./Options.css";
 import { genres } from "../data/Genres";
+import { types } from "../data/Types";
 import OptionCheckbox from "../components/OptionCheckbox";
 import Datefield from "../components/Datefield";
 import RandomizeButton from "../components/RandomizeButton";
+import Textfield from "../components/Textfield";
 
 function Options() {
   sessionStorage.clear();
@@ -15,12 +16,18 @@ function Options() {
         <TitleBar text="Randomizer Options" />
       </div>
 
+      <div>
+        <p className="infotext">
+          Edit your preferences for the randomizer! Be careful, the more restrictive you are, the longer it will take!
+        </p>
+      </div>
+
       {/* Big Overall Grid*/}
       <div className="container">
         {/*Row 1*/}
         <div className="row">
           {/* Dropdown to select genres*/}
-          <div className="col">
+          <div className="col-12 col-md-auto">
             <div className="dropdown text-center">
               <button
                 className="btn btn-primary dropdown-toggle"
@@ -43,7 +50,7 @@ function Options() {
           </div>
 
           {/*Radio buttons to select match mode */}
-          <div className="col-auto">
+          <div className="col-12 col-md-auto">
             <div className="form-check radio">
               <input
                 className="form-check-input"
@@ -54,7 +61,7 @@ function Options() {
                 onChange={() => setMatchMode("any")}
               />
               <label className="form-check-label radiolabel" htmlFor="anyMatch">
-                Any Match
+                Match Any Genre
               </label>
             </div>
             <div className="form-check radio">
@@ -66,13 +73,13 @@ function Options() {
                 onChange={() => setMatchMode("full")}
               />
               <label className="form-check-label radiolabel" htmlFor="fullMatch">
-                Full Match (Might take a long time)
+                Match All Genres (Will take a long time)
               </label>
             </div>
           </div>
 
           {/*Date Filter*/}
-          <div className="col">
+          <div className="col-12 col-md-auto">
             <Datefield
               id="latestAirdate"
               helpText="Only Anime Before:"
@@ -89,9 +96,60 @@ function Options() {
         </div>
 
         {/*Row 2*/}
-        <div className="row">
-          <div className="col">
-            <p>xd</p>
+        <div className="row top5">
+          {/*Number of Episodes Filter*/}
+          <div className="col-sm-12 col-md w-100">
+            <Textfield
+              id="minEpisodes"
+              helpText="Minimum Number of Episodes:"
+              ariaLabel="minEpisodes"
+              defaultValue="10"
+            />
+            <Textfield
+              id="maxEpisodes"
+              helpText="Maximum Number of Episodes:"
+              ariaLabel="maxEpisodes"
+              defaultValue="30"
+            />
+          </div>
+
+          {/*Length of Episodes Filter*/}
+          <div className="col-sm-12 col-md w-100">
+            <Textfield
+              id="minLength"
+              helpText="Minimum Length of Episodes (minutes):"
+              ariaLabel="minLength"
+              defaultValue="20"
+            />
+            <Textfield
+              id="maxLength"
+              helpText="Maximum Length of Episodes (minutes):"
+              ariaLabel="maxLength"
+              defaultValue="30"
+            />
+          </div>
+
+          {/*Type Selector*/}
+          <div className="col-sm-12 col-md w-100">
+            <div className="dropdown text-center">
+              <button
+                className="btn btn-primary dropdown-toggle"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                id="typeDropdown"
+              >
+                Select Type
+              </button>
+              <ul className="dropdown-menu type" aria-labelledby="typeDropdown">
+                {types.map((type) => (
+                  <li key={type}>
+                    {/* Make an item for each type */}
+                    <OptionCheckbox text={type} id={type} />
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </div>
