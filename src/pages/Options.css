@@ -1,0 +1,39 @@
+.container {
+  max-width: 80vw !important;
+}
+
+.dropdown-toggle {
+  font-size: 250% !important;
+  width: 33vw !important;
+}
+
+.dropdown-menu {
+  background-color: #999999 !important;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  max-height: 50vh;
+  width: min-content !important;
+}
+
+.form-check.dropdownform {
+  color: rgb(85, 22, 222);
+}
+
+.form-check-label.radiolabel {
+  font-size: 150%;
+  color: white;
+}
+
+.form-check.radio {
+  display: flex !important;
+  align-items: center;
+}
+
+.dropdown-menu li {
+  background-color: #999999 !important;
+}
+
+.bottomButton {
+  margin: auto;
+  width: 99vw;
+}

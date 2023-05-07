@@ -43,11 +43,7 @@ function Output() {
 
       <div className="card">
         {/* we call displayImage to get the anime's thumbnail */}
-        <img
-          src={displayImage(anime)}
-          alt="anime thumbnail"
-          className="card-img-top"
-        ></img>
+        <img src={displayImage(anime)} alt="anime thumbnail" className="card-img-top"></img>
         <ul className="list-group list-group-flush">
           <li className="list-group-item">
             <strong>Type: </strong>
@@ -109,11 +105,17 @@ function displayImage(anime: any) {
 
 /* tries to return genres from API, else returns blank */
 function displayGenre(anime: any) {
+  let genreListObj = anime.genres.map((genre: any) => genre.name);
+  let themeList = anime.themes.map((theme: any) => theme.name);
+  // Combine the two arrays
+  let allGenres: string[] = [].concat(genreListObj, themeList);
+  // Strip duplicates by turning it into a Set then back into an array
+  allGenres = [...new Set(allGenres)];
   var genreList = "";
   try {
-    for (var i = 0; i < anime.genres.length; i++)
-      if (i < anime.genres.length - 1) genreList += anime.genres[i].name + ", ";
-      else genreList += anime.genres[i].name;
+    for (var i = 0; i < allGenres.length; i++)
+      if (i < allGenres.length - 1) genreList += allGenres[i] + ", ";
+      else genreList += allGenres[i];
     return genreList;
   } catch (error) {
     null;

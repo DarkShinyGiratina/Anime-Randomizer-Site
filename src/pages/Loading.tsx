@@ -8,8 +8,8 @@ import OptionsButtons from "../components/OptionsButtons";
 function Loading() {
   const [timedOut, setTimeoutState] = useState(false);
   useEffect(() => {
-    setTimeout(() => setTimeoutState(true), 4000);
-  });
+    setTimeout(() => setTimeoutState(true), 7500);
+  }, []);
   return (
     <>
       <div>
@@ -26,7 +26,7 @@ function Loading() {
       <div className="return">
         {timedOut && (
           <p className="text-center stuck">
-            Stuck? Return to <Link to="/">home!</Link>
+            Stuck? Try broadening your search <Link to="/options">options.</Link>
           </p>
         )}
       </div>

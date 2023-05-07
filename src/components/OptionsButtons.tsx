@@ -1,5 +1,6 @@
 import ChangeOptionsButton from "./ChangeOptionsButton";
 import RandomizeButton from "./RandomizeButton";
+import "./OptionsButtons.css";
 
 function OptionsButtons() {
   return (
