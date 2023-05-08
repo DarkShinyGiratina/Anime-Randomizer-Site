@@ -9,13 +9,12 @@ interface Props {
 
 function Datefield({ id, helpText, ariaLabel, defaultValue }: Props) {
   // State for the text value
-  const [input, setInput] = useState(defaultValue);
+  const [input, setInput] = useState(sessionStorage.getItem(id) ?? defaultValue);
 
   useEffect(() => {
     sessionStorage.setItem(id, input);
   }, [input]);
 
-  sessionStorage.setItem(id, defaultValue);
   return (
     <div className="input-group">
       <span className="input-group-text" id={id}>
@@ -26,7 +25,7 @@ function Datefield({ id, helpText, ariaLabel, defaultValue }: Props) {
         className="form-control"
         aria-label={ariaLabel}
         aria-labelledby={id}
-        defaultValue={defaultValue}
+        defaultValue={sessionStorage.getItem(id) ?? defaultValue}
         onChange={(e) => setInput(e.target.value)}
       ></input>
     </div>

@@ -6,11 +6,22 @@ import OptionCheckbox from "../components/OptionCheckbox";
 import Datefield from "../components/Datefield";
 import RandomizeButton from "../components/RandomizeButton";
 import Textfield from "../components/Textfield";
+import ResetOptionsButton from "../components/ResetOptionsButton";
+
+const defaultValues: { [key: string]: string } = {
+  latestAirdate: getLocalToday(),
+  earliestAirdate: "1900-01-01",
+  minEpisodes: "10",
+  maxEpisodes: "30",
+  minLength: "20",
+  maxLength: "30",
+  optionsSet: "true",
+  "Match Mode": "any",
+};
 
 function Options() {
-  sessionStorage.clear();
-  sessionStorage.setItem("Match Mode", "any");
-  sessionStorage.setItem("optionsSet", "true");
+  sessionStorage.setItem("Match Mode", defaultValues["Match Mode"]);
+  sessionStorage.setItem("optionsSet", defaultValues.optionsSet);
   return (
     <>
       <div>
@@ -85,13 +96,13 @@ function Options() {
               id="latestAirdate"
               helpText="Only Anime Before:"
               ariaLabel="Latest Airdate"
-              defaultValue={getLocalToday()}
+              defaultValue={defaultValues.latestAirdate}
             />
             <Datefield
               id="earliestAirdate"
               helpText="Only Anime After:"
               ariaLabel="Earliest Airdate"
-              defaultValue="1900-01-01"
+              defaultValue={defaultValues.earliestAirdate}
             />
           </div>
         </div>
@@ -104,13 +115,13 @@ function Options() {
               id="minEpisodes"
               helpText="Minimum Number of Episodes:"
               ariaLabel="minEpisodes"
-              defaultValue="10"
+              defaultValue={defaultValues.minEpisodes}
             />
             <Textfield
               id="maxEpisodes"
               helpText="Maximum Number of Episodes:"
               ariaLabel="maxEpisodes"
-              defaultValue="30"
+              defaultValue={defaultValues.maxEpisodes}
             />
           </div>
 
@@ -120,13 +131,13 @@ function Options() {
               id="minLength"
               helpText="Minimum Length of Episodes (minutes):"
               ariaLabel="minLength"
-              defaultValue="20"
+              defaultValue={defaultValues.minLength}
             />
             <Textfield
               id="maxLength"
               helpText="Maximum Length of Episodes (minutes):"
               ariaLabel="maxLength"
-              defaultValue="30"
+              defaultValue={defaultValues.maxLength}
             />
           </div>
 
@@ -156,7 +167,16 @@ function Options() {
       </div>
 
       <div className="bottomButton">
-        <RandomizeButton text="Randomize" bypass={false} />
+        <div className="container-fluid">
+          <div className="row">
+            <div className="col">
+              <RandomizeButton text="Randomize" bypass={false} />
+            </div>
+            <div className="col">
+              <ResetOptionsButton />
+            </div>
+          </div>
+        </div>
       </div>
     </>
   );

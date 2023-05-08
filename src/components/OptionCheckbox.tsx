@@ -5,7 +5,7 @@ interface Props {
   id: string;
 }
 function OptionCheckbox({ text, id }: Props) {
-  const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useState(sessionStorage.getItem(id) === "activated");
 
   // If we check the box, add the selection to session storage. If we uncheck, delete it.
   function toggleSelected() {

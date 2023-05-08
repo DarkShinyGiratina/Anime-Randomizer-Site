@@ -1,6 +1,5 @@
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { genres } from "../data/Genres";
-import "./RandomizeButton.css";
 import { types } from "../data/Types";
 
 interface Props {
