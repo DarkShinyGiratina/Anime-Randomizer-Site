@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import "./ChangeOptionsButton.css";
 
 function ChangeOptionsButton() {
   return (
