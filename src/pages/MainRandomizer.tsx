@@ -2,6 +2,7 @@ import OptionsButtons from "../components/OptionsButtons";
 import TitleBar from "../components/TitleBar";
 
 function MainRandomizer() {
+  sessionStorage.clear();
   return (
     <>
       <div>

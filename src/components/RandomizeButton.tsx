@@ -3,18 +3,22 @@ import { genres } from "../data/Genres";
 import "./RandomizeButton.css";
 import { types } from "../data/Types";
 
-function RandomizeButton() {
+interface Props {
+  text: string;
+  bypass: boolean;
+}
+
+function RandomizeButton({ text, bypass }: Props) {
   let navigate = useNavigate();
   return (
-    <button type="button" className="btn btn-primary bigbutton" onClick={() => getAnime(navigate)}>
-      Randomize
+    <button type="button" className="btn btn-primary bigbutton" onClick={() => getAnime(navigate, bypass)}>
+      {text}
     </button>
   );
 }
 
-const getAnime = async (navigate: NavigateFunction) => {
-  // If we're already loading, the button won't do anything.
-  if (window.location.pathname === "/loading") return;
+const getAnime = async (navigate: NavigateFunction, bypass: boolean) => {
+  if (bypass) sessionStorage.clear();
 
   // Navigate to loading page
   navigate("/loading");
@@ -27,7 +31,7 @@ const getAnime = async (navigate: NavigateFunction) => {
     if (window.location.pathname !== "/loading") {
       return; // Return out if the user leaves the page, so we don't infinite loop.
     }
-    if (passCheck(anime)) finished = true;
+    if (passCheck(anime, bypass)) finished = true;
   }
 
   await new Promise((r) => setTimeout(r, 2500));
@@ -36,7 +40,8 @@ const getAnime = async (navigate: NavigateFunction) => {
   navigate("/output", { state: anime });
 };
 
-function passCheck(anime: any): boolean {
+function passCheck(anime: any, bypass: boolean): boolean {
+  if (bypass) return true;
   let genrePass: boolean = genreCheck(anime);
   let datePass: boolean = dateCheck(anime);
   let numPass: boolean = numCheck(anime);

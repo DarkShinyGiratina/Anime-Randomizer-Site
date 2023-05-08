@@ -3,7 +3,7 @@ import TitleBar from "../components/TitleBar";
 import "./Loading.css";
 import { useEffect, useState } from "react";
 import kurukuru from "../assets/loading.webp";
-import OptionsButtons from "../components/OptionsButtons";
+import ChangeOptionsButton from "../components/ChangeOptionsButton";
 
 function Loading() {
   const [timedOut, setTimeoutState] = useState(false);
@@ -20,7 +20,7 @@ function Loading() {
       <img src={kurukuru} alt="Loading Anime..." className="mx-auto d-block" />
 
       <div>
-        <OptionsButtons />
+        <ChangeOptionsButton />
       </div>
 
       <div className="return">

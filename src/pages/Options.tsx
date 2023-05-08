@@ -10,6 +10,7 @@ import Textfield from "../components/Textfield";
 function Options() {
   sessionStorage.clear();
   sessionStorage.setItem("Match Mode", "any");
+  sessionStorage.setItem("optionsSet", "true");
   return (
     <>
       <div>
@@ -155,7 +156,7 @@ function Options() {
       </div>
 
       <div className="bottomButton">
-        <RandomizeButton />
+        <RandomizeButton text="Randomize" bypass={false} />
       </div>
     </>
   );
