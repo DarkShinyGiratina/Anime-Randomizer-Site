@@ -21,7 +21,7 @@ function LoginBox() {
         },
       },
       signInFlow: "popup",
-      signInSuccessUrl: "/options", // This is where should redirect if the sign in is successful.
+      signInSuccessUrl: "/", // This is where should redirect if the sign in is successful.
       signInOptions: [
         // This array contains all the ways an user can authenticate in your application. For this example, is only by email.
         {

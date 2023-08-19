@@ -3,7 +3,7 @@ import { genres } from "../data/Genres";
 import { types } from "../data/Types";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { firebaseAuth, firebaseDb } from "../firebase";
-import { get, ref } from "firebase/database";
+import { get, push, ref, remove } from "firebase/database";
 import { User } from "firebase/auth";
 
 interface Props {
@@ -36,6 +36,7 @@ const getAnime = async (navigate: NavigateFunction, bypass: boolean, user: User)
   let anime = null;
   while (!finished) {
     anime = await fetch("https://api.jikan.moe/v4/random/anime").then((response) => response.json());
+    console.log(anime.data.title);
     if (window.location.pathname !== "/loading") {
       return; // Return out if the user leaves the page, so we don't infinite loop.
     }
@@ -45,13 +46,24 @@ const getAnime = async (navigate: NavigateFunction, bypass: boolean, user: User)
   await new Promise((r) => setTimeout(r, 2500));
   // If the user navigated off in between finding an anime and the timeout, chuck the whole thing out.
   if (window.location.pathname !== "/loading") return;
+  // If we're logged in, save this result to database.
+  if (user) {
+    const historyRef = ref(firebaseDb, "history/" + user.uid);
+    const snapshot = await get(historyRef);
+    const hist = Object.keys(snapshot.val());
+    if (hist.length < 10) push(ref(firebaseDb, "history/" + user.uid), anime);
+    else {
+      remove(ref(firebaseDb, `history/${user.uid}/${hist[0]}`));
+      push(ref(firebaseDb, "history/" + user.uid), anime);
+    }
+  }
   navigate("/output", { state: anime });
 };
 
 async function passCheck(anime: any, bypass: boolean, user: User) {
   if (bypass) return true;
   const userSnapshot = (await get(ref(firebaseDb, "options/" + user?.uid))).val();
-  let genrePass: boolean = await genreCheck(anime, userSnapshot);
+  let genrePass: boolean = genreCheck(anime, userSnapshot);
   let datePass: boolean = dateCheck(anime, userSnapshot);
   let numPass: boolean = numCheck(anime, userSnapshot);
   let lenPass: boolean = lenCheck(anime, userSnapshot);
@@ -59,10 +71,10 @@ async function passCheck(anime: any, bypass: boolean, user: User) {
   return genrePass && datePass && numPass && lenPass && typePass;
 }
 
-async function genreCheck(anime: any, userSnapshot: any) {
+function genreCheck(anime: any, userSnapshot: any) {
   let matchMode: string = userSnapshot["Match Mode"] ?? "null";
-  let genreList = anime.data.genres.map((genre: any) => genre.name);
-  let themeList = anime.data.themes.map((theme: any) => theme.name);
+  let genreList = anime.data?.genres?.map((genre: any) => genre.name);
+  let themeList = anime.data?.themes?.map((theme: any) => theme.name);
   // Combine the two arrays
   let allGenres: string[] = [].concat(genreList, themeList);
   // Strip duplicates by turning it into a Set then back into an array
@@ -106,21 +118,24 @@ function dateCheck(anime: any, userSnapshot: any): boolean {
   let earliest: string = userSnapshot["earliestAirdate"] ?? "1700-01-01";
 
   //Get airdate from the data, if there is no airdate make it null so it'll get rejected by the search
-  let airdate = anime.data.aired.from?.split("T")[0] ?? "null";
+  let airdate = anime.data?.aired.from?.split("T")[0] ?? "null";
+  if (!airdate) return false;
   if (airdate === "null") return false;
 
   return earliest <= airdate && airdate <= latest;
 }
 
 function numCheck(anime: any, userSnapshot: any): boolean {
-  let episodes = anime.data.episodes;
+  let episodes = anime.data?.episodes;
+  if (!episodes) return false; // Fails the episode check if there aren't any episodes given.
   let minEpisodes = userSnapshot["minEpisodes"] ?? 0;
   let maxEpisodes = userSnapshot["maxEpisodes"] ?? Infinity;
   return +minEpisodes <= episodes && episodes <= +maxEpisodes;
 }
 
 function lenCheck(anime: any, userSnapshot: any): boolean {
-  let duration: string = anime.data.duration;
+  let duration: string = anime.data?.duration;
+  if (!duration) return false; // Fails the length check if there's no duration listed.
   let minLen = userSnapshot["minLength"] ?? 0;
   let maxLen = userSnapshot["maxLength"] ?? Infinity;
 
@@ -149,7 +164,7 @@ function typeCheck(anime: any, userSnapshot: any): boolean {
     }
   }
   // Return whether we have the type or not (if there are no types, return true too)
-  return activatedTypes.includes(anime.data.type) || activatedTypes.length === 0;
+  return activatedTypes.includes(anime.data?.type) || activatedTypes.length === 0;
 }
 
 export default RandomizeButton;

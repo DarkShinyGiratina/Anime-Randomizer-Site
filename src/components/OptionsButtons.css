@@ -2,3 +2,12 @@
   max-width: 100vw;
   margin-top: 2vh;
 }
+
+.btn {
+  white-space: normal !important;
+}
+
+.button-container {
+  margin: auto;
+  width: 99vw !important;
+}

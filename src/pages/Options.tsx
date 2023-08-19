@@ -10,6 +10,7 @@ import ResetOptionsButton from "../components/ResetOptionsButton";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { firebaseAuth, firebaseDb } from "../firebase";
 import { ref, set } from "firebase/database";
+import GoHomeButton from "../components/GoHomeButton";
 
 function Options() {
   const [user] = useAuthState(firebaseAuth);
@@ -144,6 +145,9 @@ function Options() {
             </div>
             <div className="col">
               <ResetOptionsButton />
+            </div>
+            <div className="col">
+              <GoHomeButton />
             </div>
           </div>
         </div>

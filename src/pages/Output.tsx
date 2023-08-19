@@ -116,8 +116,8 @@ function displayImage(anime: any) {
 
 /* tries to return genres from API, else returns blank */
 function displayGenre(anime: any) {
-  let genreListObj = anime.genres.map((genre: any) => genre.name);
-  let themeList = anime.themes.map((theme: any) => theme.name);
+  let genreListObj = anime.genres?.map((genre: any) => genre.name);
+  let themeList = anime.themes?.map((theme: any) => theme.name);
   // Combine the two arrays
   let allGenres: string[] = [].concat(genreListObj, themeList);
   // Strip duplicates by turning it into a Set then back into an array

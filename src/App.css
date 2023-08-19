@@ -9,4 +9,5 @@ html {
 .bigbutton {
   font-size: 2rem !important;
   width: 100%;
+  margin-top: 2vh;
 }

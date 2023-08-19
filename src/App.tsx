@@ -7,6 +7,7 @@ import Loading from "./pages/Loading";
 import Output from "./pages/Output";
 import Options from "./pages/Options";
 import Login from "./pages/Login";
+import History from "./pages/History";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/output" element={<Output />} />
         <Route path="/options" element={<Options />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/history" element={<History />} />
       </Routes>
     </Router>
   );
