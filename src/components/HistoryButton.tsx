@@ -8,14 +8,14 @@ function HistoryButton() {
     return (
       <Link to="/history">
         <button type="button" className="btn btn-primary bigbutton">
-          Your History
+          {"Your History - " + (user.isAnonymous ? "Guest Account" : user.email)}
         </button>
       </Link>
     );
   } else {
     return (
       <button type="button" className="btn btn-primary bigbutton">
-        Your History
+        Your History - Not Logged In!
       </button>
     );
   }
