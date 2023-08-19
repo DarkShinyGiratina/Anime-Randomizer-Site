@@ -6,6 +6,7 @@ import MainRandomizer from "./pages/MainRandomizer";
 import Loading from "./pages/Loading";
 import Output from "./pages/Output";
 import Options from "./pages/Options";
+import Login from "./pages/Login";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/loading" element={<Loading />} />
         <Route path="/output" element={<Output />} />
         <Route path="/options" element={<Options />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </Router>
   );

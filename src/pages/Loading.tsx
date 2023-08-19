@@ -4,16 +4,20 @@ import "./Loading.css";
 import { useEffect, useState } from "react";
 import kurukuru from "../assets/loading.webp";
 import ChangeOptionsButton from "../components/ChangeOptionsButton";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { firebaseAuth } from "../firebase";
 
 function Loading() {
   const [timedOut, setTimeoutState] = useState(false);
   useEffect(() => {
     setTimeout(() => setTimeoutState(true), 7500);
   }, []);
+
+  const [user] = useAuthState(firebaseAuth);
   return (
     <>
       <div>
-        <TitleBar text="Anime Randomizer" />
+        <TitleBar text={user ? "Anime Randomizer" : "Please login with the button on the top right!"} />
       </div>
 
       <br />

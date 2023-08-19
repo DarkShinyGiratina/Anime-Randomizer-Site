@@ -7,25 +7,21 @@ import Datefield from "../components/Datefield";
 import RandomizeButton from "../components/RandomizeButton";
 import Textfield from "../components/Textfield";
 import ResetOptionsButton from "../components/ResetOptionsButton";
-
-const defaultValues: { [key: string]: string } = {
-  latestAirdate: getLocalToday(),
-  earliestAirdate: "1900-01-01",
-  minEpisodes: "10",
-  maxEpisodes: "30",
-  minLength: "20",
-  maxLength: "30",
-  optionsSet: "true",
-  "Match Mode": "any",
-};
+import { useAuthState } from "react-firebase-hooks/auth";
+import { firebaseAuth, firebaseDb } from "../firebase";
+import { ref, set } from "firebase/database";
 
 function Options() {
-  sessionStorage.setItem("Match Mode", defaultValues["Match Mode"]);
-  sessionStorage.setItem("optionsSet", defaultValues.optionsSet);
+  const [user] = useAuthState(firebaseAuth);
+  const matchModeRef = ref(firebaseDb, "options/" + user?.uid + "/Match Mode");
+  const optionsSetRef = ref(firebaseDb, "options/" + user?.uid + "/optionsSet");
+  set(matchModeRef, "any");
+  set(optionsSetRef, true);
+
   return (
     <>
       <div>
-        <TitleBar text="Randomizer Options" />
+        <TitleBar text={user ? "Randomizer Options" : "Please login with the button on the top right!"} />
       </div>
 
       <div>
@@ -70,7 +66,9 @@ function Options() {
                 name="matchTypeRadio"
                 id="anyMatch"
                 defaultChecked={true}
-                onChange={() => setMatchMode("any")}
+                onChange={() => {
+                  if (user) set(matchModeRef, "any");
+                }}
               />
               <label className="form-check-label radiolabel" htmlFor="anyMatch">
                 Match Any Genre
@@ -82,7 +80,9 @@ function Options() {
                 type="radio"
                 name="matchTypeRadio"
                 id="fullMatch"
-                onChange={() => setMatchMode("full")}
+                onChange={() => {
+                  if (user) set(matchModeRef, "full");
+                }}
               />
               <label className="form-check-label radiolabel" htmlFor="fullMatch">
                 Match All Genres (Will take a long time)
@@ -92,18 +92,8 @@ function Options() {
 
           {/*Date Filter*/}
           <div className="col-12 col-md-auto">
-            <Datefield
-              id="latestAirdate"
-              helpText="Only Anime Before:"
-              ariaLabel="Latest Airdate"
-              defaultValue={defaultValues.latestAirdate}
-            />
-            <Datefield
-              id="earliestAirdate"
-              helpText="Only Anime After:"
-              ariaLabel="Earliest Airdate"
-              defaultValue={defaultValues.earliestAirdate}
-            />
+            <Datefield id="latestAirdate" helpText="Only Anime Before:" ariaLabel="Latest Airdate" />
+            <Datefield id="earliestAirdate" helpText="Only Anime After:" ariaLabel="Earliest Airdate" />
           </div>
         </div>
 
@@ -111,34 +101,14 @@ function Options() {
         <div className="row top5">
           {/*Number of Episodes Filter*/}
           <div className="col-sm-12 col-md w-100">
-            <Textfield
-              id="minEpisodes"
-              helpText="Minimum Number of Episodes:"
-              ariaLabel="minEpisodes"
-              defaultValue={defaultValues.minEpisodes}
-            />
-            <Textfield
-              id="maxEpisodes"
-              helpText="Maximum Number of Episodes:"
-              ariaLabel="maxEpisodes"
-              defaultValue={defaultValues.maxEpisodes}
-            />
+            <Textfield id="minEpisodes" helpText="Minimum Number of Episodes:" ariaLabel="minEpisodes" />
+            <Textfield id="maxEpisodes" helpText="Maximum Number of Episodes:" ariaLabel="maxEpisodes" />
           </div>
 
           {/*Length of Episodes Filter*/}
           <div className="col-sm-12 col-md w-100">
-            <Textfield
-              id="minLength"
-              helpText="Minimum Length of Episodes (minutes):"
-              ariaLabel="minLength"
-              defaultValue={defaultValues.minLength}
-            />
-            <Textfield
-              id="maxLength"
-              helpText="Maximum Length of Episodes (minutes):"
-              ariaLabel="maxLength"
-              defaultValue={defaultValues.maxLength}
-            />
+            <Textfield id="minLength" helpText="Minimum Length of Episodes (minutes):" ariaLabel="minLength" />
+            <Textfield id="maxLength" helpText="Maximum Length of Episodes (minutes):" ariaLabel="maxLength" />
           </div>
 
           {/*Type Selector*/}
@@ -180,17 +150,6 @@ function Options() {
       </div>
     </>
   );
-}
-
-// Set matching mode for genre search.
-function setMatchMode(mode: string) {
-  sessionStorage.setItem("Match Mode", mode);
-}
-
-// Get YYYY-MM-DD format with timezones accounted for
-function getLocalToday() {
-  var tzoffset = new Date().getTimezoneOffset() * 60000; //offset in milliseconds
-  return new Date(Date.now() - tzoffset).toISOString().split("T")[0];
 }
 
 export default Options;

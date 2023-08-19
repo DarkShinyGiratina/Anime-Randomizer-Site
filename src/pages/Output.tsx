@@ -3,17 +3,21 @@ import TitleBar from "../components/TitleBar";
 import "./Output.css";
 import noImage from "../assets/no-image-png-2.png";
 import OptionsButtons from "../components/OptionsButtons";
+import LoginButton from "../components/LoginButton";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { firebaseAuth } from "../firebase";
 
 function Output() {
   // Use Location to get the anime data pushed by the API.
   const location = useLocation();
+  const [user] = useAuthState(firebaseAuth);
 
   // If there's no state, that means the output page was accessed without randomizing.
   if (!location.state) {
     return (
       <>
         <div>
-          <TitleBar text="Anime Randomizer" />
+          <TitleBar text={user ? "Anime Randomizer" : "Please login with the button on the top right!"} />
         </div>
         <div>
           <h1 className="text-center subtitle">
@@ -29,13 +33,20 @@ function Output() {
   return (
     <>
       <div>
-        <h1 className="specialtext text-center">
-          <strong>
-            <a href={anime.url} target="_blank">
-              {anime.title}
-            </a>
-          </strong>
-        </h1>
+        <div className="d-flex">
+          <div className="flex-fill">
+            <h1 className="text-center outputspecialtext">
+              <strong>
+                <a href={anime.url} target="_blank">
+                  {anime.title}
+                </a>
+              </strong>
+            </h1>
+          </div>
+          <div>
+            <LoginButton />
+          </div>
+        </div>
         <h2 className="text-center subtitle">
           <strong>{anime.title_english}</strong>
         </h2>

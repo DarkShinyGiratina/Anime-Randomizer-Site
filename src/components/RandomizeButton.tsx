@@ -1,6 +1,10 @@
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import { genres } from "../data/Genres";
 import { types } from "../data/Types";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { firebaseAuth, firebaseDb } from "../firebase";
+import { get, ref } from "firebase/database";
+import { User } from "firebase/auth";
 
 interface Props {
   text: string;
@@ -8,17 +12,22 @@ interface Props {
 }
 
 function RandomizeButton({ text, bypass }: Props) {
+  const [user] = useAuthState(firebaseAuth);
   let navigate = useNavigate();
   return (
-    <button type="button" className="btn btn-primary bigbutton" onClick={() => getAnime(navigate, bypass)}>
+    <button
+      type="button"
+      className="btn btn-primary bigbutton"
+      onClick={() => {
+        if (user) getAnime(navigate, bypass, user);
+      }}
+    >
       {text}
     </button>
   );
 }
 
-const getAnime = async (navigate: NavigateFunction, bypass: boolean) => {
-  if (bypass) sessionStorage.clear();
-
+const getAnime = async (navigate: NavigateFunction, bypass: boolean, user: User) => {
   // Navigate to loading page
   navigate("/loading");
 
@@ -30,7 +39,7 @@ const getAnime = async (navigate: NavigateFunction, bypass: boolean) => {
     if (window.location.pathname !== "/loading") {
       return; // Return out if the user leaves the page, so we don't infinite loop.
     }
-    if (passCheck(anime, bypass)) finished = true;
+    if (await passCheck(anime, bypass, user)) finished = true;
   }
 
   await new Promise((r) => setTimeout(r, 2500));
@@ -39,18 +48,19 @@ const getAnime = async (navigate: NavigateFunction, bypass: boolean) => {
   navigate("/output", { state: anime });
 };
 
-function passCheck(anime: any, bypass: boolean): boolean {
+async function passCheck(anime: any, bypass: boolean, user: User) {
   if (bypass) return true;
-  let genrePass: boolean = genreCheck(anime);
-  let datePass: boolean = dateCheck(anime);
-  let numPass: boolean = numCheck(anime);
-  let lenPass: boolean = lenCheck(anime);
-  let typePass: boolean = typeCheck(anime);
+  const userSnapshot = (await get(ref(firebaseDb, "options/" + user?.uid))).val();
+  let genrePass: boolean = await genreCheck(anime, userSnapshot);
+  let datePass: boolean = dateCheck(anime, userSnapshot);
+  let numPass: boolean = numCheck(anime, userSnapshot);
+  let lenPass: boolean = lenCheck(anime, userSnapshot);
+  let typePass: boolean = typeCheck(anime, userSnapshot);
   return genrePass && datePass && numPass && lenPass && typePass;
 }
 
-function genreCheck(anime: any): boolean {
-  let matchMode: string = sessionStorage.getItem("Match Mode") ?? "null";
+async function genreCheck(anime: any, userSnapshot: any) {
+  let matchMode: string = userSnapshot["Match Mode"] ?? "null";
   let genreList = anime.data.genres.map((genre: any) => genre.name);
   let themeList = anime.data.themes.map((theme: any) => theme.name);
   // Combine the two arrays
@@ -58,9 +68,9 @@ function genreCheck(anime: any): boolean {
   // Strip duplicates by turning it into a Set then back into an array
   allGenres = [...new Set(allGenres)];
 
-  // Iterate over every key in session storage, if the key is in the overall genres list that means it's a selected genre
+  // Iterate over every key in the snapshot, if the key is in the overall genres list that means it's a selected genre
   let activatedGenres: string[] = [];
-  for (let key of Object.keys(sessionStorage)) {
+  for (let key of Object.keys(userSnapshot)) {
     if (genres.includes(key)) {
       activatedGenres.push(key);
     }
@@ -91,9 +101,9 @@ function genreCheck(anime: any): boolean {
   return false;
 }
 
-function dateCheck(anime: any): boolean {
-  let latest: string = sessionStorage.getItem("latestAirdate") ?? "2400-01-01";
-  let earliest: string = sessionStorage.getItem("earliestAirdate") ?? "1700-01-01";
+function dateCheck(anime: any, userSnapshot: any): boolean {
+  let latest: string = userSnapshot["latestAirdate"] ?? "2400-01-01";
+  let earliest: string = userSnapshot["earliestAirdate"] ?? "1700-01-01";
 
   //Get airdate from the data, if there is no airdate make it null so it'll get rejected by the search
   let airdate = anime.data.aired.from?.split("T")[0] ?? "null";
@@ -102,17 +112,17 @@ function dateCheck(anime: any): boolean {
   return earliest <= airdate && airdate <= latest;
 }
 
-function numCheck(anime: any): boolean {
+function numCheck(anime: any, userSnapshot: any): boolean {
   let episodes = anime.data.episodes;
-  let minEpisodes = sessionStorage.getItem("minEpisodes") ?? 0;
-  let maxEpisodes = sessionStorage.getItem("maxEpisodes") ?? Infinity;
+  let minEpisodes = userSnapshot["minEpisodes"] ?? 0;
+  let maxEpisodes = userSnapshot["maxEpisodes"] ?? Infinity;
   return +minEpisodes <= episodes && episodes <= +maxEpisodes;
 }
 
-function lenCheck(anime: any): boolean {
+function lenCheck(anime: any, userSnapshot: any): boolean {
   let duration: string = anime.data.duration;
-  let minLen = sessionStorage.getItem("minLength") ?? 0;
-  let maxLen = sessionStorage.getItem("maxLength") ?? Infinity;
+  let minLen = userSnapshot["minLength"] ?? 0;
+  let maxLen = userSnapshot["maxLength"] ?? Infinity;
 
   let durationWords: string[] = duration.split(" ");
   let totalDurationMinutes: number = 0;
@@ -130,10 +140,10 @@ function lenCheck(anime: any): boolean {
   return +minLen <= totalDurationMinutes && totalDurationMinutes <= +maxLen;
 }
 
-function typeCheck(anime: any): boolean {
-  // Iterate over every key in session storage, if the key is in the overall types list that means it's a selected type
+function typeCheck(anime: any, userSnapshot: any): boolean {
+  // Iterate over every key in local storage, if the key is in the overall types list that means it's a selected type
   let activatedTypes: string[] = [];
-  for (let key of Object.keys(sessionStorage)) {
+  for (let key of Object.keys(userSnapshot)) {
     if (types.includes(key)) {
       activatedTypes.push(key);
     }

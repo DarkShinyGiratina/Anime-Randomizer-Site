@@ -1,6 +1,7 @@
-.specialtext {
+.outputspecialtext {
   color: #fff176 !important;
   font-size: 3rem !important;
+  margin-left: 6%;
 }
 
 .subtitle {
@@ -8,7 +9,7 @@
   font-size: 2rem;
 }
 
-.specialtext a {
+.outputspecialtext a {
   text-decoration: none !important;
   color: inherit !important;
 }

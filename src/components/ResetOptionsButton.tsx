@@ -1,9 +1,15 @@
+import { ref, remove } from "firebase/database";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { firebaseAuth, firebaseDb } from "../firebase";
 import { useNavigate } from "react-router-dom";
 
 function ResetOptionsButton() {
-  const navigate = useNavigate();
+  const [user] = useAuthState(firebaseAuth);
+  let userRef = ref(firebaseDb, "options/" + user?.uid);
+  let navigate = useNavigate();
+
   function resetOptions() {
-    sessionStorage.clear();
+    remove(userRef);
     navigate(0);
   }
 
