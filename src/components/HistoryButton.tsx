@@ -14,9 +14,11 @@ function HistoryButton() {
     );
   } else {
     return (
-      <button type="button" className="btn btn-primary bigbutton">
-        Your History - Not Logged In!
-      </button>
+      <Link to="/login">
+        <button type="button" className="btn btn-primary bigbutton">
+          Your History - Not Logged In!
+        </button>
+      </Link>
     );
   }
 }

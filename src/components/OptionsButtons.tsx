@@ -8,13 +8,11 @@ function OptionsButtons() {
     <div className="container-fluid button-container">
       <div className="row">
         <div className="col">
-          <RandomizeButton text={"Randomize (Stored Options)"} bypass={false} />
+          <RandomizeButton text="Randomize (Stored Options)" bypass={false} />
         </div>
-        {
-          <div className="col">
-            <RandomizeButton text="Randomize (Default Options)" bypass={true} />
-          </div>
-        }
+        <div className="col">
+          <RandomizeButton text="Randomize (Default Options)" bypass={true} />
+        </div>
         <div className="col">
           <ChangeOptionsButton />
         </div>

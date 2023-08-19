@@ -14,7 +14,7 @@ function OptionCheckbox({ text, id }: Props) {
   useEffect(() => {
     const getData = async () => {
       if (user) {
-        let userRef = ref(firebaseDb, "options/" + user.uid);
+        const userRef = ref(firebaseDb, "options/" + user.uid);
         const snapshot = await get(userRef);
         setChecked(snapshot.val()[id] !== undefined);
       }
@@ -25,7 +25,7 @@ function OptionCheckbox({ text, id }: Props) {
   // If we check the box, add the selection to database. If we uncheck, delete it.
   function toggleSelected() {
     if (user) {
-      let boxRef = ref(firebaseDb, "options/" + user.uid + `/${id}/`);
+      const boxRef = ref(firebaseDb, "options/" + user.uid + `/${id}/`);
       if (!isChecked) {
         set(boxRef, "activated");
         setChecked(true);

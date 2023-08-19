@@ -16,7 +16,7 @@ function Textfield({ id, helpText, ariaLabel }: Props) {
   useEffect(() => {
     const getData = async () => {
       if (user) {
-        let userRef = ref(firebaseDb, "options/" + user?.uid);
+        const userRef = ref(firebaseDb, "options/" + user?.uid);
         const snapshot = await get(userRef);
         setValue(snapshot.val()[id]);
       }

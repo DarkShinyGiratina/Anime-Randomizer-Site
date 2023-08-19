@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom";
 
 function ResetOptionsButton() {
   const [user] = useAuthState(firebaseAuth);
-  let userRef = ref(firebaseDb, "options/" + user?.uid);
-  let navigate = useNavigate();
+  const userRef = ref(firebaseDb, "options/" + user?.uid);
+  const navigate = useNavigate();
 
   function resetOptions() {
     remove(userRef);

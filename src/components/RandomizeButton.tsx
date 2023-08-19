@@ -13,7 +13,7 @@ interface Props {
 
 function RandomizeButton({ text, bypass }: Props) {
   const [user] = useAuthState(firebaseAuth);
-  let navigate = useNavigate();
+  const navigate = useNavigate();
   return (
     <button
       type="button"
@@ -32,11 +32,11 @@ const getAnime = async (navigate: NavigateFunction, bypass: boolean, user: User)
   navigate("/loading");
 
   // Get our random anime.
-  let finished: boolean = false;
+  let finished = false;
   let anime = null;
   while (!finished) {
     anime = await fetch("https://api.jikan.moe/v4/random/anime").then((response) => response.json());
-    console.log(anime.data.title);
+    console.log(anime?.data.title);
     if (window.location.pathname !== "/loading") {
       return; // Return out if the user leaves the page, so we don't infinite loop.
     }
@@ -63,26 +63,26 @@ const getAnime = async (navigate: NavigateFunction, bypass: boolean, user: User)
 async function passCheck(anime: any, bypass: boolean, user: User) {
   if (bypass) return true;
   const userSnapshot = (await get(ref(firebaseDb, "options/" + user?.uid))).val();
-  let genrePass: boolean = genreCheck(anime, userSnapshot);
-  let datePass: boolean = dateCheck(anime, userSnapshot);
-  let numPass: boolean = numCheck(anime, userSnapshot);
-  let lenPass: boolean = lenCheck(anime, userSnapshot);
-  let typePass: boolean = typeCheck(anime, userSnapshot);
+  const genrePass: boolean = genreCheck(anime, userSnapshot);
+  const datePass: boolean = dateCheck(anime, userSnapshot);
+  const numPass: boolean = numCheck(anime, userSnapshot);
+  const lenPass: boolean = lenCheck(anime, userSnapshot);
+  const typePass: boolean = typeCheck(anime, userSnapshot);
   return genrePass && datePass && numPass && lenPass && typePass;
 }
 
 function genreCheck(anime: any, userSnapshot: any) {
-  let matchMode: string = userSnapshot["Match Mode"] ?? "null";
-  let genreList = anime.data?.genres?.map((genre: any) => genre.name);
-  let themeList = anime.data?.themes?.map((theme: any) => theme.name);
+  const matchMode: string = userSnapshot["Match Mode"] ?? "null";
+  const genreList = anime.data?.genres?.map((genre: any) => genre.name);
+  const themeList = anime.data?.themes?.map((theme: any) => theme.name);
   // Combine the two arrays
   let allGenres: string[] = [].concat(genreList, themeList);
   // Strip duplicates by turning it into a Set then back into an array
   allGenres = [...new Set(allGenres)];
 
   // Iterate over every key in the snapshot, if the key is in the overall genres list that means it's a selected genre
-  let activatedGenres: string[] = [];
-  for (let key of Object.keys(userSnapshot)) {
+  const activatedGenres: string[] = [];
+  for (const key of Object.keys(userSnapshot)) {
     if (genres.includes(key)) {
       activatedGenres.push(key);
     }
@@ -91,7 +91,7 @@ function genreCheck(anime: any, userSnapshot: any) {
   if (activatedGenres.length === 0) return true; // If there are no genres selected, pass the check
 
   if (matchMode === "full") {
-    for (let genre of activatedGenres) {
+    for (const genre of activatedGenres) {
       // In Full Match mode, all activated genres must be included, therefore if an activated genre isn't in all genres, this anime won't pass.
       if (!allGenres.includes(genre)) {
         console.log(genre + " not found in " + allGenres);
@@ -99,7 +99,7 @@ function genreCheck(anime: any, userSnapshot: any) {
       }
     }
   } else if (matchMode === "any") {
-    for (let genre of activatedGenres) {
+    for (const genre of activatedGenres) {
       // In Any Match mode, any activated genre must be included, therefore as soon as an activated genre is found in all genres, this anime does pass.
       if (allGenres.includes(genre)) {
         return true;
@@ -114,11 +114,11 @@ function genreCheck(anime: any, userSnapshot: any) {
 }
 
 function dateCheck(anime: any, userSnapshot: any): boolean {
-  let latest: string = userSnapshot["latestAirdate"] ?? "2400-01-01";
-  let earliest: string = userSnapshot["earliestAirdate"] ?? "1700-01-01";
+  const latest: string = userSnapshot["latestAirdate"] ?? "2400-01-01";
+  const earliest: string = userSnapshot["earliestAirdate"] ?? "1700-01-01";
 
   //Get airdate from the data, if there is no airdate make it null so it'll get rejected by the search
-  let airdate = anime.data?.aired.from?.split("T")[0] ?? "null";
+  const airdate = anime.data?.aired.from?.split("T")[0] ?? "null";
   if (!airdate) return false;
   if (airdate === "null") return false;
 
@@ -126,21 +126,21 @@ function dateCheck(anime: any, userSnapshot: any): boolean {
 }
 
 function numCheck(anime: any, userSnapshot: any): boolean {
-  let episodes = anime.data?.episodes;
+  const episodes = anime.data?.episodes;
   if (!episodes) return false; // Fails the episode check if there aren't any episodes given.
-  let minEpisodes = userSnapshot["minEpisodes"] ?? 0;
-  let maxEpisodes = userSnapshot["maxEpisodes"] ?? Infinity;
+  const minEpisodes = userSnapshot["minEpisodes"] ?? 0;
+  const maxEpisodes = userSnapshot["maxEpisodes"] ?? Infinity;
   return +minEpisodes <= episodes && episodes <= +maxEpisodes;
 }
 
 function lenCheck(anime: any, userSnapshot: any): boolean {
-  let duration: string = anime.data?.duration;
+  const duration: string = anime.data?.duration;
   if (!duration) return false; // Fails the length check if there's no duration listed.
-  let minLen = userSnapshot["minLength"] ?? 0;
-  let maxLen = userSnapshot["maxLength"] ?? Infinity;
+  const minLen = userSnapshot["minLength"] ?? 0;
+  const maxLen = userSnapshot["maxLength"] ?? Infinity;
 
-  let durationWords: string[] = duration.split(" ");
-  let totalDurationMinutes: number = 0;
+  const durationWords: string[] = duration.split(" ");
+  let totalDurationMinutes = 0;
 
   for (let i = 0; i < durationWords.length; i++) {
     if (durationWords[i] === "sec") {
@@ -157,8 +157,8 @@ function lenCheck(anime: any, userSnapshot: any): boolean {
 
 function typeCheck(anime: any, userSnapshot: any): boolean {
   // Iterate over every key in local storage, if the key is in the overall types list that means it's a selected type
-  let activatedTypes: string[] = [];
-  for (let key of Object.keys(userSnapshot)) {
+  const activatedTypes: string[] = [];
+  for (const key of Object.keys(userSnapshot)) {
     if (types.includes(key)) {
       activatedTypes.push(key);
     }

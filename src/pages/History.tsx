@@ -15,7 +15,7 @@ function History() {
   useEffect(() => {
     const getHistory = async () => {
       if (user) {
-        let histRef = ref(firebaseDb, "history/" + user.uid);
+        const histRef = ref(firebaseDb, "history/" + user.uid);
         const snapshot = await get(histRef);
         setIsLoading(false);
         setHist(snapshot.val());

@@ -11,6 +11,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { firebaseAuth, firebaseDb } from "../firebase";
 import { ref, set } from "firebase/database";
 import GoHomeButton from "../components/GoHomeButton";
+import HistoryButton from "../components/HistoryButton";
 
 function Options() {
   const [user] = useAuthState(firebaseAuth);
@@ -148,6 +149,11 @@ function Options() {
             </div>
             <div className="col">
               <GoHomeButton />
+            </div>
+          </div>
+          <div className="row justify-content-center">
+            <div className="col-sm-4 col">
+              <HistoryButton />
             </div>
           </div>
         </div>

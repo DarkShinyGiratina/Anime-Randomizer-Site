@@ -116,15 +116,15 @@ function displayImage(anime: any) {
 
 /* tries to return genres from API, else returns blank */
 function displayGenre(anime: any) {
-  let genreListObj = anime.genres?.map((genre: any) => genre.name);
-  let themeList = anime.themes?.map((theme: any) => theme.name);
+  const genreListObj = anime.genres?.map((genre: any) => genre.name);
+  const themeList = anime.themes?.map((theme: any) => theme.name);
   // Combine the two arrays
   let allGenres: string[] = [].concat(genreListObj, themeList);
   // Strip duplicates by turning it into a Set then back into an array
   allGenres = [...new Set(allGenres)];
-  var genreList = "";
+  let genreList = "";
   try {
-    for (var i = 0; i < allGenres.length; i++)
+    for (let i = 0; i < allGenres.length; i++)
       if (i < allGenres.length - 1) genreList += allGenres[i] + ", ";
       else genreList += allGenres[i];
     return genreList;
@@ -150,8 +150,8 @@ function displaySynopsis(anime: any) {
 
 /* tries to build aired date string from API. Else returns blank */
 function displayAired(anime: any) {
-  var airDate = "";
-  var months = [
+  let airDate = "";
+  const months = [
     "January",
     "February",
     "March",
