@@ -36,7 +36,7 @@ const getAnime = async (navigate: NavigateFunction, bypass: boolean, user: User)
   let anime = null;
   while (!finished) {
     anime = await fetch("https://api.jikan.moe/v4/random/anime").then((response) => response.json());
-    console.log(anime?.data.title);
+    console.log(anime?.data?.title);
     if (window.location.pathname !== "/loading") {
       return; // Return out if the user leaves the page, so we don't infinite loop.
     }
@@ -83,8 +83,10 @@ function genreCheck(anime: any, userSnapshot: any) {
   // Iterate over every key in the snapshot, if the key is in the overall genres list that means it's a selected genre
   const activatedGenres: string[] = [];
   for (const key of Object.keys(userSnapshot)) {
-    if (genres.includes(key)) {
-      activatedGenres.push(key);
+    if (!key.startsWith("genre_")) continue; // If the key isn't a genre key, skip it.
+    const genreName = key.substring(6); // Get the genre name without genre_
+    if (genres.includes(genreName)) {
+      activatedGenres.push(genreName);
     }
   }
 

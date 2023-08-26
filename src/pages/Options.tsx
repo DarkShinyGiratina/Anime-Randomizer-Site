@@ -12,6 +12,7 @@ import { firebaseAuth, firebaseDb } from "../firebase";
 import { ref, set } from "firebase/database";
 import GoHomeButton from "../components/GoHomeButton";
 import HistoryButton from "../components/HistoryButton";
+import ClearAllGenresButton from "../components/ClearAllGenresButton";
 
 function Options() {
   const [user] = useAuthState(firebaseAuth);
@@ -49,10 +50,11 @@ function Options() {
                 Select Genre
               </button>
               <ul className="dropdown-menu" aria-labelledby="optionsDropdown">
+                <ClearAllGenresButton />
                 {genres.map((genre) => (
                   <li key={genre}>
                     {/* Make an item for each genre */}
-                    <OptionCheckbox text={genre} id={genre} />{" "}
+                    <OptionCheckbox text={genre} id={`genre_${genre}`} />{" "}
                   </li>
                 ))}
               </ul>
