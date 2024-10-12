@@ -50,7 +50,8 @@ const getAnime = async (navigate: NavigateFunction, bypass: boolean, user: User)
   if (user) {
     const historyRef = ref(firebaseDb, "history/" + user.uid);
     const snapshot = await get(historyRef);
-    const hist = Object.keys(snapshot.val());
+    const val = snapshot.val();
+    const hist = val ? Object.keys(val) : [];
     if (hist.length < 10) push(ref(firebaseDb, "history/" + user.uid), anime);
     else {
       remove(ref(firebaseDb, `history/${user.uid}/${hist[0]}`));

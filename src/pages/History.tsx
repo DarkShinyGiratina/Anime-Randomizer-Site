@@ -46,17 +46,23 @@ function History() {
         </div>
         <div>
           <ul className="list-group">
-            {Object.values(hist)
-              .reverse()
-              .map((anime: any) => (
-                <li key={anime.data.mal_id} className="list-group-item">
-                  <strong>
-                    <Link to="/output" state={anime}>
-                      {anime.data.title}
-                    </Link>
-                  </strong>
-                </li>
-              ))}
+            {hist !== null ? (
+              Object.values(hist)
+                .reverse()
+                .map((anime: any) => (
+                  <li key={anime.data.mal_id} className="list-group-item">
+                    <strong>
+                      <Link to="/output" state={anime}>
+                        {anime.data.title}
+                      </Link>
+                    </strong>
+                  </li>
+                ))
+            ) : (
+              <li key={"no hist"} className="list-group-item">
+                No history!
+              </li>
+            )}
           </ul>
         </div>
         <div>
