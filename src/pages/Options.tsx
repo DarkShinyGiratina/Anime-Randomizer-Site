@@ -115,6 +115,12 @@ function Options() {
             <Textfield id="maxLength" helpText="Maximum Length of Episodes (minutes):" ariaLabel="maxLength" />
           </div>
 
+          {/*Score Filter*/}
+          <div className="col-sm-12 col-md w-100">
+            <Textfield id="minScore" helpText="Minimum Score on MAL:" ariaLabel="minScore" />
+            <Textfield id="maxScore" helpText="Maximum Score on MAL:" ariaLabel="maxScore" />
+          </div>
+
           {/*Type Selector*/}
           <div className="col-sm-12 col-md w-100">
             <div className="dropdown text-center">

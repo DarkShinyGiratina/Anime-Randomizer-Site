@@ -69,7 +69,8 @@ async function passCheck(anime: any, bypass: boolean, user: User) {
   const numPass: boolean = numCheck(anime, userSnapshot);
   const lenPass: boolean = lenCheck(anime, userSnapshot);
   const typePass: boolean = typeCheck(anime, userSnapshot);
-  return genrePass && datePass && numPass && lenPass && typePass;
+  const scorePass: boolean = scoreCheck(anime, userSnapshot);
+  return genrePass && datePass && numPass && lenPass && typePass && scorePass;
 }
 
 function genreCheck(anime: any, userSnapshot: any) {
@@ -134,6 +135,14 @@ function numCheck(anime: any, userSnapshot: any): boolean {
   const minEpisodes = userSnapshot["minEpisodes"] ?? 0;
   const maxEpisodes = userSnapshot["maxEpisodes"] ?? Infinity;
   return +minEpisodes <= episodes && episodes <= +maxEpisodes;
+}
+
+function scoreCheck(anime: any, userSnapshot: any): boolean {
+  const score = anime.data?.score;
+  if (!score) return false; // Fails the episode check if there aren't any episodes given.
+  const minScore = userSnapshot["minScore"] ?? 0;
+  const maxScore = userSnapshot["maxScore"] ?? Infinity;
+  return +minScore <= score && score <= +maxScore;
 }
 
 function lenCheck(anime: any, userSnapshot: any): boolean {
